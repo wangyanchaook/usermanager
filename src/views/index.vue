@@ -40,21 +40,21 @@
                     ></t-sider>
                 </Sider>
                 <Layout :style="{padding: '0 24px 24px'}">
-                    <Breadcrumb :style="{margin: '5px 0'}">
-                        <Tag type="dot" v-for="(item,key) in openTabPane"
-                             :key="key"
-                             closable
-                             @on-close="closeTag(item['id'])">
-                            {{item['title']}}
-                        </Tag>
-                    </Breadcrumb>
+                    <div :style="{margin: '5px 0'}">
+                        <ButtonGroup style="margin-right:5px " v-for="(item,key) in openTabPane">
+                            <Button :icon="item['icon']" :type="item['type']" @click="setOpenTabPane(item['id'])"
+                                    :key="key">{{item['title']}}
+                            </Button>
+                            <Button v-if="key!==0" :type="item['type']" icon="md-close"
+                                    @click="closeTag(item['id'])"></Button>
+                        </ButtonGroup>
+                    </div>
                     <Content :style="{padding: '10px', minHeight: '280px', background: '#fff'}">
-                        <Tabs :animated="false" v-model="tabId">
-                            <TabPane label="首页" name="0">
-                                这是首页
-                            </TabPane>
-                            <TabPane v-for="(item,key) in openTabPane" :label="item['title']" :name="item['id']"
-                                     :key="key"></TabPane>
+                        <Tabs :animated="false" v-model="tabId" style="margin-top:-15px; ">
+                            <div v-for="(item,key) in openTabPane" :key="key">
+                                <TabPane v-if="key===0" label="" name="0">这是首页</TabPane>
+                                <TabPane v-else :label="''" :name="item['id']">{{item['title']}}</TabPane>
+                            </div>
                         </Tabs>
                     </Content>
                 </Layout>
@@ -73,31 +73,31 @@
                 screenHeight: document.documentElement.clientHeight - 66,
                 timer: false,
                 tabId: '0',
-                activeName: '3-1',
-                openNames: ['3'],
+                activeName: '',
+                openNames: [],
                 tabPaneLabel: (h, params) => {
                     return h('Button',
                         {},
                         '11')
                 },
-                openTabPane: [],
+                openTabPane: [{title: '首页', id: '0', icon: 'ios-home-outline', parentId: '0'}],
                 tagColumns: [
                     {title: '首页', id: '0'},
                     {title: '菜单1', id: '1'}
                 ],
                 menus: [
                     {title: 'item 1', id: '1', icon: 'ios-navigate', parentId: '0'},
-                    {title: 'options 1', id: '1-1', icon: 'ios-navigate', parentId: '1'},
-                    {title: 'options 2', id: '1-2', icon: 'ios-navigate', parentId: '1'},
-                    {title: 'options 3', id: '1-3', icon: 'ios-navigate', parentId: '1'},
+                    {title: 'options 1-1', id: '1-1', icon: 'ios-navigate', parentId: '1'},
+                    {title: 'options 1-2', id: '1-2', icon: 'ios-navigate', parentId: '1'},
+                    {title: 'options 1-3', id: '1-3', icon: 'ios-navigate', parentId: '1'},
                     {title: 'item 2', id: '2', icon: 'ios-keypad', parentId: '0'},
-                    {title: 'options 1', id: '2-1', icon: 'ios-navigate', parentId: '2'},
-                    {title: 'options 2', id: '2-2', icon: 'ios-navigate', parentId: '2'},
-                    {title: 'options 3', id: '2-3', icon: 'ios-navigate', parentId: '2'},
+                    {title: 'options 2-1', id: '2-1', icon: 'ios-navigate', parentId: '2'},
+                    {title: 'options 2-2', id: '2-2', icon: 'ios-navigate', parentId: '2'},
+                    {title: 'options 2-3', id: '2-3', icon: 'ios-navigate', parentId: '2'},
                     {title: 'item 3', id: '3', icon: 'ios-analytics', parentId: '0'},
-                    {title: 'options 1', id: '3-1', icon: 'ios-navigate', parentId: '3'},
-                    {title: 'options 2', id: '3-2', icon: 'ios-navigate', parentId: '3'},
-                    {title: 'options 3', id: '3-3', icon: 'ios-navigate', parentId: '3'}
+                    {title: 'options 3-1', id: '3-1', icon: 'ios-navigate', parentId: '3'},
+                    {title: 'options 3-2', id: '3-2', icon: 'ios-navigate', parentId: '3'},
+                    {title: 'options 3-3', id: '3-3', icon: 'ios-navigate', parentId: '3'}
                 ]
             }
         },
@@ -119,17 +119,33 @@
                     }
                 }
                 this.tabId = id
+                this.removeButtonType(id)
+            },
+            removeButtonType(id) {
+                this.openTabPane.forEach(item => {
+                    if (item['id'] === id) {
+                        item['type'] = 'primary'
+                    } else {
+                        item['type'] = 'default'
+                    }
+                })
+            },
+            setOpenTabPane(id) {
+                this.tabId = id
+                this.removeButtonType(this.tabId)
             },
             closeTag(id) {
                 this.openTabPane = this.openTabPane.filter(item => item['id'] !== id)
                 if (this.openTabPane.length > 0) {
                     this.tabId = this.openTabPane[this.openTabPane.length - 1]['id']
+                    this.removeButtonType(this.tabId)
                 } else {
                     this.tabId = '0'
                 }
             },
         },
         mounted() {
+            this.removeButtonType(this.tabId)
             // const that = this
             // 监听窗口大小
             window.onresize = () => {

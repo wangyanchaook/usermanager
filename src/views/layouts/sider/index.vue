@@ -14,7 +14,7 @@
                 </template>
                 <MenuItem v-for="(item1,key1) in menus.filter(item2=>item2['parentId']===item['id'])"
                           :name="item1['id']" :key="key1"
-                          @on-select="clickMenuItem(item1)">{{item1['title']}}
+                          @on-select="clickMenuItem(item1)"><Icon :type="item1['icon']"></Icon>{{item1['title']}}
                 </MenuItem>
             </Submenu>
         </Menu>
