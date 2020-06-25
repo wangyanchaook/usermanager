@@ -41,6 +41,7 @@
                 </Sider>
                 <Layout :style="{padding: '0 24px 24px'}">
                     <div :style="{margin: '5px 0'}">
+                        <!--优化横向按钮功能，按钮太多时支持横向滚动-->
                         <ButtonGroup style="margin-right:5px " v-for="(item,key) in openTabPane">
                             <Button :icon="item['icon']" :type="item['type']" @click="setOpenTabPane(item['id'])"
                                     :key="key">{{item['title']}}
